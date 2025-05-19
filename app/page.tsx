@@ -2,18 +2,15 @@
 
 import React, { useState, useCallback, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation'; 
-import { startCall, endCall } from '@/lib/callFunctions'
-import { CallConfig, SelectedTool } from '@/lib/types'
+import { startCall, endCall } from '../lib/callFunctions'
+import { CallConfig, SelectedTool } from '../lib/types'
 import demoConfig from './demo-config';
 import { Role, Transcript, UltravoxExperimentalMessageEvent, UltravoxSessionStatus } from 'ultravox-client';
-import BorderedImage from '@/app/components/BorderedImage';
-import UVLogo from '@/public/UVMark-White.svg';
 import CallStatus from './components/CallStatus';
-import DebugMessages from '@/app/components/DebugMessages';
+import DebugMessages from './components/DebugMessages';
 import MicToggleButton from './components/MicToggleButton';
 import ScreeningTimer from './components/ScreeningTimer';
 import { PhoneOffIcon, AlertCircleIcon } from 'lucide-react';
-import OrderDetails from './components/OrderDetails';
 
 type SearchParamsProps = {
   showMuteSpeakerButton: boolean;
@@ -150,13 +147,11 @@ export default function Home() {
     }
   };
   
-  const handleTimeWarning = useCallback(() => {
-    setShowTimeNotification(true);
-    // Could send a notification sound or other alert here
-  }, []);
-  
   const handleTimeEnd = useCallback(() => {
-    handleEndCallButtonClick();
+    setShowTimeNotification(true);
+    setTimeout(() => {
+      handleEndCallButtonClick();
+    }, 10000); // Give 10 seconds warning before ending
   }, []);
 
   return (
@@ -197,9 +192,8 @@ export default function Home() {
                         )}
                         <ScreeningTimer 
                           isActive={isCallActive} 
-                          duration={600} 
-                          onTimeWarning={handleTimeWarning} 
-                          onTimeEnd={handleTimeEnd} 
+                          maxDuration={600} 
+                          onTimeUp={handleTimeEnd} 
                         />
                         <div className="mb-5 relative">
                           <div 

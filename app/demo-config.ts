@@ -1,4 +1,4 @@
-import { DemoConfig, ParameterLocation, SelectedTool } from "@/lib/types";
+import { DemoConfig, ParameterLocation, SelectedTool } from "../lib/types";
 
 function getSystemPrompt() {
   let sysPrompt: string;
@@ -93,32 +93,86 @@ function getSystemPrompt() {
 const selectedTools: SelectedTool[] = [
   {
     "temporaryTool": {
-      "modelToolName": "updateOrder",
-      "description": "Update order details. Used any time items are added or removed or when the order is finalized. Call this any time the user updates their order.",      
+      "modelToolName": "updateCandidateProfile",
+      "description": "Update candidate profile with assessment information. Call this tool whenever significant candidate information is provided, skills are demonstrated, or you make an assessment about the candidate's qualifications or fit.",      
       "dynamicParameters": [
         {
-          "name": "orderDetailsData",
+          "name": "candidateData",
           "location": ParameterLocation.BODY,
           "schema": {
-            "description": "An array of objects contain order items.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string", "description": "The name of the item to be added to the order." },
-                "quantity": { "type": "number", "description": "The quantity of the item for the order." },
-                "specialInstructions": { "type": "string", "description": "Any special instructions that pertain to the item." },
-                "price": { "type": "number", "description": "The unit price for the item." },
+            "description": "Structured data about the candidate being interviewed.",
+            "type": "object",
+            "properties": {
+              "skills": { 
+                "type": "array", 
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "skillName": { "type": "string", "description": "Name of the skill or technology mentioned" },
+                    "proficiencyLevel": { 
+                      "type": "string", 
+                      "enum": ["beginner", "intermediate", "advanced", "expert"],
+                      "description": "Assessed level of proficiency" 
+                    },
+                    "context": { "type": "string", "description": "How the candidate has applied this skill" }
+                  },
+                  "required": ["skillName"]
+                }
               },
-              "required": ["name", "quantity", "price"]
+              "experience": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": { "type": "string", "description": "Job title or role" },
+                    "duration": { "type": "string", "description": "Length of time in the role" },
+                    "responsibilities": { "type": "string", "description": "Key responsibilities or achievements" },
+                    "relevance": { 
+                      "type": "number", 
+                      "minimum": 1,
+                      "maximum": 5,
+                      "description": "Relevance to current position (1-5 scale)" 
+                    }
+                  },
+                  "required": ["role"]
+                }
+              },
+              "behavioralTraits": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "trait": { "type": "string", "description": "Observed behavioral trait" },
+                    "evidence": { "type": "string", "description": "Evidence supporting this observation" }
+                  },
+                  "required": ["trait", "evidence"]
+                }
+              },
+              "overallAssessment": {
+                "type": "object",
+                "properties": {
+                  "technicalFit": { "type": "number", "minimum": 1, "maximum": 5, "description": "Overall technical qualification fit (1-5 scale)" },
+                  "culturalFit": { "type": "number", "minimum": 1, "maximum": 5, "description": "Cultural fit assessment (1-5 scale)" },
+                  "notes": { "type": "string", "description": "General assessment notes and observations" }
+                }
+              }
             }
           },
           "required": true
         },
+        {
+          "name": "callId",
+          "location": ParameterLocation.QUERY,
+          "schema": {
+            "type": "string",
+            "description": "Unique identifier for this interview session."
+          },
+          "required": true
+        }
       ],
       "client": {}
     }
-  },
+  }
 ];
 
 export const demoConfig: DemoConfig = {

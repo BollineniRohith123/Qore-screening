@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Role } from 'ultravox-client';
-import { toggleMute } from '@/lib/callFunctions';
+import { toggleMute } from '../../lib/callFunctions';
 import { MicIcon, MicOffIcon, Volume2Icon, VolumeOffIcon } from 'lucide-react';
 
 interface MicToggleButtonProps {
