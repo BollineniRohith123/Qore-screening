@@ -17,33 +17,36 @@ const MicToggleButton: React.FC<MicToggleButtonProps> = ({ role }) => {
     } catch (error) {
       console.error("Error toggling microphone:", error);
     }
-  }, [isMuted]);
+  }, [isMuted, role]);
 
   return (
     <button
       onClick={toggleMic}
-      className="flex-grow flex items-center justify-center border-2 h-10 hover:bg-gray-700"
+      className={`flex-grow flex items-center justify-center border border-[#2A2A2A] h-10 hover:bg-[#2A2A2A] transition-colors ${isMuted ? 'bg-[rgba(147,112,219,0.2)]' : ''} relative`}
+      aria-label={isMuted ? 'Unmute' : 'Mute'}
     >
-      {isMuted ? (
-        <>
-          { role === Role.USER ? (
-            <MicOffIcon width={24} className="brightness-0 invert" />
-          ) : (
-            <VolumeOffIcon width={24} className="brightness-0 invert" />
-          )}
-          <span className="ml-2">Unmute</span>
-        </>
-      ) : (
-        <>
-          { role === Role.USER ? (
-            <MicIcon width={24} className="brightness-0 invert" />
-          ) : (
-            <Volume2Icon width={24} className="brightness-0 invert" />
-          )}
+      <div className="pointer-events-none flex items-center justify-center">
+        {isMuted ? (
+          <>
+            { role === Role.USER ? (
+              <MicOffIcon width={24} className="brightness-0 invert" />
+            ) : (
+              <VolumeOffIcon width={24} className="brightness-0 invert" />
+            )}
+            <span className="ml-2">Unmute</span>
+          </>
+        ) : (
+          <>
+            { role === Role.USER ? (
+              <MicIcon width={24} className="brightness-0 invert" />
+            ) : (
+              <Volume2Icon width={24} className="brightness-0 invert" />
+            )}
 
-          <span className="ml-2">Mute</span>
-        </>
-      )}
+            <span className="ml-2">Mute</span>
+          </>
+        )}
+      </div>
     </button>
   );
 };
